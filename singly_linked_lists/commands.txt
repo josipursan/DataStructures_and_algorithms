@@ -1,0 +1,6 @@
+A beautiful, quick explanation of optimization levels and their influence on debugging with valgrind : 
+https://stackoverflow.com/questions/5134891/how-do-i-use-valgrind-to-find-memory-leaks
+
+gcc -o singly_linked_list.exe -std=c11 -Wall -ggdb3 singly_linked_list.c
+
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose --log-file="valgrind_report.txt" ./singly_linked_list.exe
