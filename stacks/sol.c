@@ -13,14 +13,6 @@
         -quite similar to singly_linked lists, with the exception of tail - tail indicator can be dropped because we care only about the stack head
 */
 
-
-/*
-    stack_init()
-    push_data()
-    pop_data()
-    stack_destroy();
-*/
-
 typedef struct StackNode
 {
     int data;
@@ -33,7 +25,6 @@ typedef struct StackStructure
     int size;
 
     struct StackNode *head;
-    struct StackNode *tail;
 }StackStructure;
 
 void stack_init(StackStructure *my_stack)
@@ -42,10 +33,10 @@ void stack_init(StackStructure *my_stack)
     my_stack->head = NULL;
 }
 
-void stack_push(StackStructure *my_stack, void *data)   
+void stack_push(StackStructure *my_stack, void *data)      // This void for data also wasn't necessary considering this is the simple example where we don't have to malloc space for data
 {
     StackNode *node = malloc(sizeof(StackNode));
-    node->data = *data;
+    node->data = *((int*)data);
     node->nextNode = my_stack->head;
     my_stack->head = node;
     my_stack->size += 1;
@@ -61,22 +52,28 @@ void stack_pop(StackStructure *my_stack)
 
 void stack_destroy(StackStructure *my_stack)
 {
-    while()
+    if(my_stack->size <= 0)
     {
-        
+        printf("Stack has no elements, or stack size has been improperly set : %d\n", my_stack->size);
+        exit(-1);
+    }
+    while(my_stack->size > 0)   // while there still are some stacked elements, ...
+    {
+        StackNode *currentNode = my_stack->head;
+        my_stack->head = currentNode->nextNode;
+        my_stack->size -= 1;
+        free(currentNode);
     }
 }
 
-/*
-    stack_push();
-    stack_pop();
-    stack_destroy();
-*/
-
+void peek_stack_head(StackStructure *my_stack)
+{
+    // Realistically this additional local pointer was not necessary, you could've done my_stack->head->data, my_stack->head->nextNode, ...., but hey, this looks maybe a bit cleaner.
+    StackNode *stack_head = my_stack->head;
+    printf("Stack head : %p\nNode data : %d\nNext node : %p\n", (void*)stack_head, stack_head->data, stack_head->nextNode);
+}
 
 int main()
 {
-    
-    
     return 0;
 }
