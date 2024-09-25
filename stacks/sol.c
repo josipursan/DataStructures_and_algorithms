@@ -37,13 +37,25 @@ void stack_push(StackStructure *my_stack, void *data)      // This void for data
 {
     StackNode *node = malloc(sizeof(StackNode));
     node->data = *((int*)data);
-    node->nextNode = my_stack->head;
+    if(my_stack->size <= 0) // if there are no elements in stack, it means the current node we are adding will be at the bottom, thus there are no nodes after it
+    {
+        node->nextNode = NULL;
+    }
+    else
+    {
+        node->nextNode = my_stack->head;
+    }
     my_stack->head = node;
     my_stack->size += 1;
 }
 
 void stack_pop(StackStructure *my_stack)
 {
+    if(my_stack->size <= 0)
+    {
+        printf("No elements in stack to pop!\nStack size : %d\n", my_stack->size);
+        exit(0);
+    }
     StackNode *nodeToRemove = my_stack->head;
     my_stack->head = nodeToRemove->nextNode;    //moving the StackStructure->head to point to the node following current node because we are about to remove the HEAD node
     free(nodeToRemove);
@@ -73,7 +85,48 @@ void peek_stack_head(StackStructure *my_stack)
     printf("Stack head : %p\nNode data : %d\nNext node : %p\n", (void*)stack_head, stack_head->data, stack_head->nextNode);
 }
 
+void node_data(StackNode *givenNode)
+{
+    printf("givenNode addr:  %p\ngivenNode data : %d\ngivenNode nextNode : %p\n\n", givenNode, givenNode->data, (void*)givenNode->nextNode);
+}
+
 int main()
 {
+    StackStructure *stack_structure = malloc(sizeof(StackStructure));
+    stack_init(stack_structure);
+    printf("And this is the stack_structure after init\nstack_structure : %p\nstack_structure->size : %d\nstack_structure->head : %p\n\n", (void*)stack_structure, stack_structure->size, (void*)stack_structure->head);
+    
+    int n1 = 1; // imagine this is some woo-woo highly complex data you need to pass (later implementation will have malloced data, probably malloced inside some struct)
+    int n2 = 2;
+    int n3 = 3;
+
+    stack_push(stack_structure, (void*)&n1);
+    stack_push(stack_structure, (void*)&n2);
+    stack_push(stack_structure, (void*)&n3);
+    printf("stack_structure after pushing all 3 nodes\nstack_structure : %p\nstack_structure->size : %d\nstack_structure->head : %p\n\n", (void*)stack_structure, stack_structure->size, (void*)stack_structure->head);
+
+    // Let's check out stack head now using peek_stack_head()
+    printf("\npeek_stack_head(stack_structure) : \n");
+    peek_stack_head(stack_structure);
+
+    printf("\n========================================================================\n");
+    printf("\nNow let's try navigating through the stack, starting from the head\n\n");
+    printf("stack_head : %p\nhead data : %d\nhead->nextNode : %p\n\n", (void*)stack_structure->head, stack_structure->head->data, (void*)stack_structure->head->nextNode);
+    printf("node after head : %p\ndata : %d\nnextNode : %p\n\n", (void*)stack_structure->head->nextNode, stack_structure->head->nextNode->data, (void*)stack_structure->head->nextNode->nextNode);
+    printf("probably last node : %p\ndata : %d\nnextNode : %p\n\n", (void*)stack_structure->head->nextNode->nextNode, stack_structure->head->nextNode->nextNode->data, (void*)stack_structure->head->nextNode->nextNode->nextNode);
+
+    printf("\n========================================================================\n");
+    printf("Now let's pop the stack head!\n");
+    stack_pop(stack_structure);
+    printf("And verify by checking out the stack head\n");
+    peek_stack_head(stack_structure);
+    printf("\nstack_head : %p\nhead data : %d\nhead->nextNode : %p\n\n", (void*)stack_structure->head, stack_structure->head->data, (void*)stack_structure->head->nextNode);
+    printf("node after head : %p\ndata : %d\nnextNode : %p\n\n", (void*)stack_structure->head->nextNode, stack_structure->head->nextNode->data, (void*)stack_structure->head->nextNode->nextNode);
+    
+    printf("\n========================================================================\n");
+    printf("Last, but not least, stack_destroy()\n");
+    stack_destroy(stack_structure);
+    //peek_stack_head(stack_structure);     // if uncomment this line, execution will segfault because there is nothing to peek at
+    printf("stack_structure : %p\nstack_structure->size : %d\nstack_structure->head : %p\n\n", (void*)stack_structure, stack_structure->size, (void*)stack_structure->head);    // this will return 0 for size and nil for head
     return 0;
 }
